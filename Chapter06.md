@@ -166,6 +166,76 @@ A：如果两个程序首先要求Woofer，那么电脑会无休止的饥饿：�
 - - - -
 ## 39.一个主修人类学、辅修计算机科学的学生参加了一个研究课题，调查是否可以教会非洲狒拂理解死锁。他找到一处很深的峡谷，在上边固定了一根橫跨峡谷的绳索，这样狒拂就可以攀住绳索越过峡谷。同一时刻，只要朝着相同的方向就可以有几只狒狒通过。但如果向东和向西的狒拂同时攀在绳索上那么会产生死锁（拂拂会被卡在中间），因为它们无法在绳索上从另一只的背上翻过去。如果一只狒拂想越过峡谷，它必须看当前是否有别的狒拂正在逆向通行。利用信号量编写一个避免死锁的程序来解决该问题。不考虑连续东行的狒拂会使得西行的狒拂无限制地等待的情况。
 A：
+```c++
+#define EAST 1;
+#define WEST 2;
+#define NULL 0;
+typedef int semaphore;
+int state = NULL;
+semaphore mutex = 1;						//临界区的互斥
+semaphore eastward;
+semaphore westward;
+int EastCount = 0;
+int WestCount = 0;
+
+void crossEastward()
+{
+	down(&mutex); 							//进入临界区
+	if(state==NULL ||state==EAST)
+	{
+		state = EAST;
+		up(&eastward);
+	}
+	EastCount++; 							//记录要通过的狒狒的数量
+	up(&mutex);								//退出临界区
+
+	down(&eastward);    					//开始过峡谷
+	cross();
+
+	down(&mutex);		 //离开峡谷的时候由于有更新所以也得确保互斥访问
+ 	EastCount--; 
+
+	if(EastCount==0) 
+	{ 
+		STATE = NULL; 
+		for(int i = 0; i < WestCount;i++) 
+				up(&westward); 
+		if(WestCount > 0)
+				state = WEST; 
+	} 
+	up(&mutex); 
+}
+
+void crossWestward()
+{
+	down(&mutex); 							//进入临界区
+	if(state==NULL ||state==West)
+	{
+		state = West;
+		up(&westward);
+	}
+	WestCount++; 							//记录要通过的狒狒的数量
+	up(&mutex);
+
+	down(&westward);    					//开始过峡谷
+	cross();
+
+	down(&mutex);		 //离开峡谷的时候由于有更新所以也得确保互斥访问
+ 	WestCount--; 
+
+	if(WestCount==0) 
+	{ 
+		STATE = NULL; 
+		for(int i = 0; i < EastCount;i++) 
+				up(&eastward); 
+		if(EastCount > 0)
+				state = East; 
+	} 
+	up(&mutex); 
+}
+
+
+```
 - - - -
 ## 40.重复上一个习题，但此次要避免饥饿。当一只想向东去的狒狒来到绳索跟前，但发现有别的狒狒正在向西越过峡谷时，它会一直等到绳索可用为止。但在至少有一只狒拂向东越过峡谷之前，不允许再有拂狒开始从东向西越过峡谷。
 
