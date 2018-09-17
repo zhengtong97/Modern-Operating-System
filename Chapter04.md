@@ -36,7 +36,6 @@
 Q1: 给出文件/etc/passwd的五种不同的路径名。（提示：考虑目录项”.”和”..”。）
 
 A:
-
 /etc/passwd
 /./etc/passwd
 /././etc/passwd
