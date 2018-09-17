@@ -44,6 +44,7 @@ A:
 /etc/../etc/../etc/passwd
 /etc/../etc/../etc/../etc/passwd
 /etc/../etc/../etc/../etc/../etc/passwd
+
 - - - -
 Q2：在Windows中，当用户双击资源管理器中列出的一个文件时，就会运行一个程序，并以这个文件作为参数。操作系统要知道运行的是哪个程序，请给出两种不同的方法。
 
